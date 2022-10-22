@@ -19,13 +19,3 @@ class CustomUserChangeForm(UserChangeForm):
 	class Meta:
 		model = CustomUser
 		fields = ("email",)
-
-
-class ProfileForm(forms.ModelForm):
-	address = forms.Textarea()
-	
-	class Meta:
-		model = CustomUser
-		fields = ("nick_name", "full_name", "phone",
-				  "email", "address", "avatar",)
-		

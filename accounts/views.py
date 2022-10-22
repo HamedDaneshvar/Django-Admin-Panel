@@ -6,19 +6,9 @@ from django.contrib.auth import (
 	login,
 	authenticate,
 )
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import PasswordChangeView
-from django.contrib.auth.forms import PasswordChangeForm
-from accounts.models import CustomUser
 from .forms import (
 	CustomUserCreationForm,
-	ProfileForm,
 )
-
-@login_required
-def index(request):
-	return render(request,
-				  "base.html",)
 
 
 def signup(request):
@@ -38,19 +28,3 @@ def signup(request):
 	return render(request,
 				  "accounts/signup.html",
 				  {"form": form,})
-
-@login_required
-def profile(request):
-	user = CustomUser.objects.get(id=request.user.id)
-	if request.method == "POST":
-		profile_form = ProfileForm(request.POST, request.FILES, instance=user)
-		profile_form.save()
-		return redirect("accounts:profile")
-	else:
-		profile_form = ProfileForm(instance=user)
-		password_change_form = PasswordChangeForm(user=request.user)
-
-	return render(request,
-				  "accounts/profile.html",
-				  {"profile_form": profile_form,
-				   "password_change_form": password_change_form,})

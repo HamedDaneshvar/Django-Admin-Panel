@@ -9,9 +9,6 @@ from . import views
 app_name = "accounts"
 
 urlpatterns = [
-	path("index/", views.index, name="index"),
-	path("profile/", views.profile, name="profile"),
-
 	path("login/", auth_views.LoginView.as_view(template_name="accounts/login.html"),
 				   name="login"),
 	path("signup/", views.signup, name="signup"),
@@ -48,5 +45,6 @@ urlpatterns = [
 			template_name="accounts/password_reset_complete.html"),
          name="password_reset_complete",
     ),
+	
 	path("", include("django.contrib.auth.urls")),
 ]

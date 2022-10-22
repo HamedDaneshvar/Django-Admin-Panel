@@ -40,10 +40,12 @@ INSTALLED_APPS = [
 
     # third-party
 	'widget_tweaks',
+    'django_jalali',
 
 	# local app
     'home.apps.HomeConfig',
 	'accounts.apps.AccountsConfig',
+    'panel.apps.PanelConfig',
 ]
 
 MIDDLEWARE = [
@@ -144,5 +146,5 @@ DEFAULT_FROM_EMAIL = "Info@localhost"
 
 # User Config
 AUTH_USER_MODEL = 'accounts.CustomUser'
-LOGIN_REDIRECT_URL = "accounts:profile"
+LOGIN_REDIRECT_URL = "panel:profile"
 LOGOUT_REDIRECT_URL = "/"

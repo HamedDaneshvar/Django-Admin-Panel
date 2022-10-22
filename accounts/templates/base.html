@@ -189,7 +189,7 @@
 		</div>
 		<div class="main-sidebar-body">
 			<ul class="nav">
-				<li class="nav-item active">
+				<li class="nav-item">
 					<a class="nav-link" href="#"><span class="shape1"></span><span class="shape2"></span><i class="fa fa-home sidemenu-icon"></i><span class="sidemenu-label">خانه</span></a>
 				</li>
 				<li class="nav-item">
@@ -211,11 +211,11 @@
 						</li>
 					</ul>
 				</li>
-				<li class="nav-item">
-					<a class="nav-link with-sub" href="#"><span class="shape1"></span><span class="shape2"></span><i class="fas fa-users sidemenu-icon"></i><span class="sidemenu-label">مدیریت کاربران</span><i class="angle fe fe-chevron-left"></i></a>
+				<li class="nav-item show active">
+					<a class="nav-link with-sub" href=""><span class="shape1"></span><span class="shape2"></span><i class="fas fa-users sidemenu-icon"></i><span class="sidemenu-label">مدیریت کاربران</span><i class="angle fe fe-chevron-left"></i></a>
 					<ul class="nav-sub">
 						<li class="nav-sub-item">
-							<a class="nav-sub-link" href="#">کاربران</a>
+							<a class="nav-sub-link" href="{% url 'panel:users' %}">کاربران</a>
 						</li>
 					</ul>
 				</li>
@@ -441,7 +441,7 @@
 							{% endif %}
 								
 						</div>
-						<a class="dropdown-item border-top" href="{% url 'accounts:profile' %}">
+						<a class="dropdown-item border-top" href="{% url 'panel:profile' %}">
 							<i class="fe fe-user"></i> پروفایل من
 						</a>
 						<a class="dropdown-item" href="{% url 'accounts:logout' %}">
@@ -631,7 +631,7 @@
 		<div class="container-fluid">
 			<div class="inner-body">
 
-
+				{% block main-inner-content %}
 				<!-- Page Header -->
 				<div class="page-header">
 					<div>
@@ -1249,7 +1249,7 @@
 					</div><!-- col end -->
 				</div>
 				<!-- Row end -->
-
+				{% endblock main-inner-content %}
 
 			</div>
 		</div>
