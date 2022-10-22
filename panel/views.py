@@ -4,6 +4,7 @@ from django.shortcuts import (
 	redirect,
 	get_object_or_404
 )
+from django.db.models import Q
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from accounts.models import CustomUser
@@ -56,10 +57,12 @@ def create_user(request):
 		form = CustomUserCreationForm(request.POST, request.FILES)
 		if form.is_valid():
 			email = form.cleaned_data.get("email")
-			form = form.save(commit=False)
-			form.username = email
-			form.save()
-			return redirect("panel:users")
+			full_name = form.cleaned_data.get("full_name")
+			user = form.save(commit=False)
+			user.username = email
+			user.nick_name = full_name
+			user.save()
+			return redirect("panel:users_list")
 	else:
 		return HttpResponse("Method not allowed!")
 
@@ -74,7 +77,7 @@ def update_user(request, id):
 			if form.cleaned_data['password']:
 				user.set_password(form.cleaned_data['password'])
 			user.save()
-			return redirect("panel:users")
+			return redirect("panel:users_list")
 	else:
 		return HttpResponse("Method not allowed!")
 
@@ -83,6 +86,68 @@ def delete_user(request, id):
 	user = get_object_or_404(CustomUser, id=id)
 	if request.method == "POST":
 		user.delete()
-		return redirect("panel:users")
+		return redirect("panel:users_list")
+	else:
+		return HttpResponse("Method not allowed!")
+
+
+@login_required
+def management_users_list(request):
+	if request.user.is_superuser:
+		users = CustomUser.objects.filter(Q(is_staff=True) |
+									  	  Q(is_superuser=True))
+	else:
+		users = CustomUser.objects.filter(is_staff=True)
+
+	create_user_form = CreateUserPanelForm()
+	update_user_from = UpdateUserPanelForm()
+	return render(request,
+				  "panel/management/list.html",
+				  {"users": users,
+				   "create_user_form": create_user_form,
+				   "update_user_form": update_user_from,})
+
+
+@login_required
+def create_staff_user(request):
+	if request.method == "POST":
+		form = CustomUserCreationForm(request.POST, request.FILES)
+		if form.is_valid():
+			email = form.cleaned_data.get("email")
+			full_name = form.cleaned_data.get("full_name")
+			user = form.save(commit=False)
+			user.username = email
+			user.nick_name = full_name
+			user.is_staff = True
+			user.save()
+			return redirect("panel:management_users_list")
+	else:
+		return HttpResponse("Method not allowed!")
+
+@login_required
+def update_staff_user(request, id):
+	user = get_object_or_404(CustomUser, id=id)
+
+	if request.method == "POST":
+		form = UpdateUserPanelForm(request.POST, request.FILES, instance=user)
+		if form.is_valid():
+			user = form.save(commit=False)
+			if form.cleaned_data['password']:
+				user.set_password(form.cleaned_data['password'])
+			user.save()
+			return redirect("panel:management_users_list")
+	else:
+		return HttpResponse("Method not allowed!")
+
+@login_required
+def delete_staff_user(request, id):
+	user = get_object_or_404(CustomUser, id=id)
+
+	if request.user.id == id:
+		return redirect("panel:management_users_list")
+
+	if request.method == "POST":
+		user.delete()
+		return redirect("panel:management_users_list")
 	else:
 		return HttpResponse("Method not allowed!")

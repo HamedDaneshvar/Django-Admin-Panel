@@ -204,7 +204,7 @@
 					<a class="nav-link with-sub" href="#"><span class="shape1"></span><span class="shape2"></span><i class="fas fa-user-shield sidemenu-icon"></i><span class="sidemenu-label">مدیریت</span><i class="angle fe fe-chevron-left"></i></a>
 					<ul class="nav-sub">
 						<li class="nav-sub-item">
-							<a class="nav-sub-link" href="#">مدیران</a>
+							<a class="nav-sub-link" href="{% url 'panel:management_users_list' %}">مدیران</a>
 						</li>
 						<li class="nav-sub-item">
 							<a class="nav-sub-link" href="#">نقش‌ها</a>
@@ -215,7 +215,7 @@
 					<a class="nav-link with-sub" href=""><span class="shape1"></span><span class="shape2"></span><i class="fas fa-users sidemenu-icon"></i><span class="sidemenu-label">مدیریت کاربران</span><i class="angle fe fe-chevron-left"></i></a>
 					<ul class="nav-sub">
 						<li class="nav-sub-item active">
-							<a class="nav-sub-link" href="{% url 'panel:users' %}">کاربران</a>
+							<a class="nav-sub-link" href="{% url 'panel:users_list' %}">کاربران</a>
 						</li>
 					</ul>
 				</li>
