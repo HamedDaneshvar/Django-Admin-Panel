@@ -43,6 +43,14 @@ class CustomUser(AbstractUser, GeneralModel):
 	USERNAME_FIELD = 'email'
 	REQUIRED_FIELDS = []
 
+	class Meta:
+		verbose_name = "user"
+		verbose_name_plural = "users"
+		permissions = (("can_manage_staff_users", "Can manage staff users"),
+					   ("can_manage_simple_users", "Can manage simple users"),
+					   ("can_manage_categories", "Can manage categories"),
+					   ("can_manage_website_settings", "Can manage website settings"),)
+
 	objects = CustomUserManager()
 
 	def __str__(self):

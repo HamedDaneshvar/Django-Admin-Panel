@@ -1,0 +1,330 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load jformat %}
+{% load group_permissions %}
+
+{% block css %}
+<!-- Bootstrap css-->
+<link href="{% static 'assets/plugins/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet"/>
+
+<!-- Icons css-->
+<link href="{% static 'assets/plugins/web-fonts/icons.css' %}" rel="stylesheet"/>
+<link href="{% static 'assets/plugins/web-fonts/font-awesome/font-awesome.min.css' %}" rel="stylesheet">
+<link href="{% static 'assets/plugins/web-fonts/plugin.css' %}" rel="stylesheet"/>
+
+<!-- Style css-->
+<link href="{% static 'assets/css-rtl/style/style.css' %}" rel="stylesheet">
+<link href="{% static 'assets/css-rtl/skins.css' %}" rel="stylesheet">
+<link href="{% static 'assets/css-rtl/dark-style.css' %}" rel="stylesheet">
+<link href="{% static 'assets/css-rtl/colors/default.css' %}" rel="stylesheet">
+
+<!-- Color css-->
+<link id="theme" rel="stylesheet" type="text/css" media="all" href="{% static 'assets/css-rtl/colors/color.css' %}">
+
+<!-- Select2 css -->
+<link href="{% static 'assets/plugins/select2/css/select2.min.css' %}" rel="stylesheet">
+
+<!-- Internal DataTables css-->
+<link href="{% static 'assets/plugins/datatable/dataTables.bootstrap4.min-rtl.css' %}" rel="stylesheet" />
+<link href="{% static 'assets/plugins/datatable/responsivebootstrap4.min.css' %}" rel="stylesheet" />
+<link href="{% static 'assets/plugins/datatable/fileexport/buttons.bootstrap4.min.css' %}" rel="stylesheet" />
+
+<!-- Sidemenu css-->
+<link href="{% static 'assets/css-rtl/sidemenu/sidemenu.css' %}" rel="stylesheet">
+
+<!-- Switcher css-->
+<link href="{% static 'assets/switcher/css/switcher-rtl.css' %}" rel="stylesheet">
+<link href="{% static 'assets/switcher/demo.css' %}" rel="stylesheet">
+{% endblock css %}
+
+{% block title %}
+نقش‌ها
+{% endblock title %}
+
+{% block main-inner-content %}
+<!-- Page Header -->
+<div class="page-header">
+	<div>
+		<h2 class="main-content-title tx-24 mg-b-5"> مدیریت </h2>
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item"><a href="{% url 'panel:home' %}">خانه</a></li>
+			<li class="breadcrumb-item active" aria-current="page">مدیران</li>
+		</ol>
+	</div>
+</div>
+
+
+<div class="row">
+	<div class="col-lg-12">
+		<div class="card custom-card overflow-hidden">
+			<div class="card-body">
+				<div>
+					<button class="btn btn-primary mb-3" data-toggle="modal" data-target="#modal-create">ایجاد نقش جدید</button>
+					<!-- Create Modal -->
+					<div class="modal fade" id="modal-create">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h4 class="modal-title">ساخت نقش جدید</h4>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<!-- form start -->
+									<form  method="POST" action="{% url 'panel:create_role' %}" >
+										{% csrf_token %}
+										<div class="card-body">
+											<div class="form-group">
+												<label for="id_name">نام نقش</label>
+												{% render_field create_group_form.name class+="form-control" placeholder="نام نقش را وارد کنید" required="required" %}
+											</div>
+											<div class="form-group">
+												<label>سطوح دسترسی</label>
+												<div class="row">
+													<div class="col">
+														<label class="ckbox">
+															{% render_field create_group_form.management %}
+															<span>مدیریت</span>
+														</label>
+													</div>
+													<div class="col">
+														<label class="ckbox">
+															{% render_field create_group_form.users %}
+															<span>مدیریت کاربران</span>
+														</label>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col">
+														<label class="ckbox">
+															{% render_field create_group_form.category %}
+															<span>دسته بندی</span>
+														</label>
+													</div>
+													<div class="col">
+														<label class="ckbox">
+															{% render_field create_group_form.settings %}
+															<span>تنظیمات سایت</span>
+														</label>
+													</div>
+												</div>
+											</div>
+										</div>
+										<!-- /.card-body -->
+
+										<div class="card-footer">
+											<button type="submit" class="btn btn-primary">ایجاد</button>
+										</div>
+									</form>
+								</div>
+							</div>
+							<!-- /.modal-content -->
+						</div>
+						<!-- /.modal-dialog -->
+					</div>
+				</div>
+				<div class="table-responsive">
+					<table id="table" class="table table-bordered table-striped text-center">
+						<thead>
+							<tr>
+								<th>نام نقش</th>
+								<th>عملیات</th>
+							</tr>
+						</thead>
+						<tbody >
+						{% for group in groups %}
+							<tr>
+								<td> {{ group.name }}</td>
+								<td class="text-center">
+									<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<i class="fas fa-sliders-h"></i>
+									</button>
+									<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+										<button type="button" class="btn btn-success dropdown-item" data-toggle="modal" data-target="#modal-edit{{ group.id }}" ><i  class="fas fa-user-edit"></i>ویرایش</button>
+										<button type="button" class="dropdown-item" data-toggle="modal" data-target="#modal-delete{{ group.id }}" ><i style="color:red" class="fas fa-user-minus"></i>حذف</button>
+									</div>
+								</td>
+							</tr>
+							<!-- Delete Modal -->
+							<div class="modal fade" id="modal-delete{{ group.id }}">
+								<div class="modal-dialog">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h4 class="modal-title">حذف نقش</h4>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+											<h5>آیا در حذف نقش "{{ group.name }}" مطمئن هستید؟ </h5>
+										</div>
+										<div class="modal-footer justify-content-between">
+											<button type="button" class="btn btn-secondary" data-dismiss="modal">بستن</button>
+											<form action="{% url 'panel:delete_role' group.id %}" method="POST">
+												{% csrf_token %}
+												<button type="submit" class="btn btn-danger">حذف</button>
+											</form>
+
+										</div>
+									</div>
+									<!-- /.modal-content -->
+								</div>
+								<!-- /.modal-dialog -->
+							</div>
+							<!-- /.modal -->
+
+							<!-- Change Modal -->
+							<div class="modal fade" id="modal-edit{{ group.id }}">
+								<div class="modal-dialog">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h4 class="modal-title">ویرایش نقش</h4>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+											<!-- form start -->
+											<form  method="POST" action="{% url 'panel:update_role' group.id %}">
+												{% csrf_token %}
+												<div class="card-body">
+													<div class="form-group">
+														<label for="id_name">نام نقش</label>
+														<input type="text" name="name" maxlength="150" class="form-control" placeholder="نام نقش را وارد کنید" value="{{ group.name }}" id="id_name" required="required" >
+													</div>
+													<div class="form-group">
+														<label>سطوح دسترسی</label>
+														<div class="row">
+															<div class="col">
+																<label class="ckbox">
+																	<input {% if group|permissions_list:'can_manage_staff_users' %}checked{% endif %} type="checkbox" name="management" id="id_management">
+																	<span>مدیریت</span>
+																</label>
+															</div>
+															<div class="col">
+																<label class="ckbox">
+																	<input {% if group|permissions_list:'can_manage_simple_users' %}checked{% endif %} type="checkbox" name="users" id="id_users">
+																	<span>مدیریت کاربران</span>
+																</label>
+															</div>
+														</div>
+														<div class="row">
+															<div class="col">
+																<label class="ckbox">
+																	<input {% if group|permissions_list:'can_manage_categories' %}checked{% endif %} type="checkbox" name="category" id="id_categories">
+																	<span>دسته بندی</span>
+																</label>
+															</div>
+															<div class="col">
+																<label class="ckbox">
+																	<input {% if group|permissions_list:'can_manage_website_settings' %}checked{% endif %} type="checkbox" name="settings" id="id_settings">
+																	<span>تنظیمات سایت</span>
+																</label>
+															</div>
+														</div>
+													</div>
+												</div>
+												<!-- /.card-body -->
+
+												<div class="card-footer">
+													<button type="submit" class="btn btn-primary">ویرایش</button>
+												</div>
+											</form>
+										</div>
+									</div>
+									<!-- /.modal-content -->
+								</div>
+								<!-- /.modal-dialog -->
+							</div>
+							<!-- /.modal -->
+						{% endfor %}
+
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock main-inner-content %}
+
+{% block js %}
+<!-- Jquery js-->
+<script src="{% static 'assets/plugins/jquery/jquery.min.js' %}"></script>
+
+<!-- Bootstrap js-->
+<script src="{% static 'assets/plugins/bootstrap/js/popper.min.js' %}"></script>
+<script src="{% static 'assets/plugins/bootstrap/js/bootstrap-rtl.js' %}"></script>
+
+<!-- Perfect-scrollbar js -->
+<script src="{% static 'assets/plugins/perfect-scrollbar/perfect-scrollbar.min-rtl.js' %}"></script>
+
+<!-- Sidemenu js -->
+<script src="{% static 'assets/plugins/sidemenu/sidemenu-rtl.js' %}"></script>
+
+<!-- Sidebar js -->
+<script src="{% static 'assets/plugins/sidebar/sidebar-rtl.js' %}"></script>
+
+<!-- Select2 js-->
+<script src="{% static 'assets/plugins/select2/js/select2.min.js' %}"></script>
+
+<!-- Internal Data Table js -->
+<script src="{% static 'assets/plugins/datatable/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/fileexport/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/fileexport/buttons.bootstrap4.min.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/fileexport/jszip.min.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/fileexport/pdfmake.min.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/fileexport/vfs_fonts.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/fileexport/buttons.html5.min.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/fileexport/buttons.print.min.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/fileexport/buttons.colVis.min.js' %}"></script>
+<script src="{% static 'assets/js/table-data.js' %}"></script>
+
+<!-- Sticky js -->
+<script src="{% static 'assets/js/sticky.js' %}"></script>
+
+<!-- Custom js -->
+<script src="{% static 'assets/js/custom.js' %}"></script>
+
+<!-- Switcher js -->
+<script src="{% static 'assets/switcher/js/switcher-rtl.js' %}"></script>
+{% endblock js %}
+
+{% block domready %}
+<script>
+    $(function () {
+        $("#table").DataTable({
+            "responsive": true,
+            "autoWidth": false,
+            "rtl" : true,
+            "language": {
+                "paginate": {
+                    "previous": "قبلی",
+                    "next" : "بعدی"
+                },
+                "sLengthMenu": "تعداد رکورد در صفحه _MENU_ ",
+                "sSearch" : "جستجو:",
+                "emptyTable":     "هیچ داده ای برای نمایش موجود نیست",
+                "info":           "نمایش _START_ تا _END_ از _TOTAL_ رکورد",
+                "infoEmpty":      "نمایش 0 تا 0 از 0 رکورد",
+
+                "infoFiltered":   "(نتیجه جستجو بین _MAX_ رکورد)",
+                "zeroRecords":    "اطلاعاتی مبنی بر جستجو شما موجود نیست...",
+            },
+
+
+
+        });
+    });
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+
+	$(function(){
+		$("ul.pagination").css("justify-content", "start")
+	});
+</script>
+{% endblock domready %}

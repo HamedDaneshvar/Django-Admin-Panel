@@ -6,6 +6,10 @@ from django.shortcuts import (
 )
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import (
+	Group,
+	Permission,
+)
 from django.contrib.auth.forms import PasswordChangeForm
 from accounts.models import CustomUser
 from accounts.forms import CustomUserCreationForm
@@ -13,6 +17,7 @@ from .forms import (
 	ProfileForm,
 	CreateUserPanelForm,
 	UpdateUserPanelForm,
+	PermissionPanelForm,
 )
 
 @login_required
@@ -149,5 +154,97 @@ def delete_staff_user(request, id):
 	if request.method == "POST":
 		user.delete()
 		return redirect("panel:management_users_list")
+	else:
+		return HttpResponse("Method not allowed!")
+
+
+@login_required
+def roles_list(request):
+	groups = Group.objects.all()
+	create_group_form = PermissionPanelForm()
+	update_group_form = PermissionPanelForm()
+	return render(request,
+				  "panel/management/role_list.html",
+				  {"groups": groups,
+				   "create_group_form": create_group_form,
+				   "update_group_form": update_group_form,})
+
+@login_required
+def create_role(request):
+	if request.method == "POST":
+		form = PermissionPanelForm(request.POST)
+		if form.is_valid():
+			role_name = form.cleaned_data['name'].lower()
+			role = Group.objects.filter(name=role_name)
+			if role:
+				return HttpResponse("role already exist!")
+			group = form.save()
+
+			# set permission to group
+			if form.cleaned_data['management']:
+				permission = Permission.objects.get(codename="can_manage_staff_users")
+				group.permissions.add(permission)
+			if form.cleaned_data['settings']:
+				permission = Permission.objects.get(codename="can_manage_website_settings")
+				group.permissions.add(permission)
+			if form.cleaned_data['category']:
+				permission = Permission.objects.get(codename="can_manage_categories")
+				group.permissions.add(permission)
+			if form.cleaned_data['users']:
+				permission = Permission.objects.get(codename="can_manage_simple_users")
+				group.permissions.add(permission)
+
+			return redirect("panel:roles_list")
+		else:
+			return HttpResponse("role already exist!")
+	else:
+		return HttpResponse("Method not allowed!")
+
+@login_required
+def update_role(request, id):
+	group = get_object_or_404(Group, id=id)
+	if request.method == "POST":
+		form = PermissionPanelForm(request.POST, instance=group)
+		if form.is_valid():
+			group.name = form.cleaned_data['name']
+			# set or remove permission to group
+			permission = Permission.objects.get(codename="can_manage_staff_users")
+			if form.cleaned_data['management']:
+				group.permissions.add(permission)
+			else:
+				group.permissions.remove(permission)
+			
+			permission = Permission.objects.get(codename="can_manage_website_settings")
+			if form.cleaned_data['settings']:
+				group.permissions.add(permission)
+			else:
+				group.permissions.remove(permission)
+			
+			permission = Permission.objects.get(codename="can_manage_categories")
+			if form.cleaned_data['category']:
+				group.permissions.add(permission)
+			else:
+				group.permissions.remove(permission)
+			
+			permission = Permission.objects.get(codename="can_manage_simple_users")
+			if form.cleaned_data['users']:
+				group.permissions.add(permission)
+			else:
+				group.permissions.remove(permission)
+
+			group.save()
+			return redirect("panel:roles_list")
+		else:
+			return HttpResponse("role already exist!")
+	else:
+		return HttpResponse("Method not allowed!")
+
+@login_required
+def delete_role(request, id):
+	group = get_object_or_404(Group, id=id)
+
+	if request.method == "POST":
+		group.delete()
+		return redirect("panel:roles_list")
 	else:
 		return HttpResponse("Method not allowed!")

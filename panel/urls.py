@@ -17,4 +17,8 @@ urlpatterns = [
 	path("admin/users/create/", views.create_staff_user, name="create_staff_user"),
 	path("admin/users/update/<int:id>/", views.update_staff_user, name="update_staff_user"),
 	path("admin/users/delete/<int:id>/", views.delete_staff_user, name="delete_staff_user"),
+	path("admin/roles/", views.roles_list, name="roles_list"),
+	path("admin/roles/create/", views.create_role, name="create_role"),
+	path("admin/roles/update/<int:id>/", views.update_role, name="update_role"),
+	path("admin/roles/delete/<int:id>/", views.delete_role, name="delete_role"),
 ]

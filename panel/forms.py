@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import Group
 from accounts.models import CustomUser
 
 
@@ -31,3 +32,16 @@ class UpdateUserPanelForm(forms.ModelForm):
 		model = CustomUser
 		fields = ("nick_name", "full_name", "password", "phone",
 				  "email", "address", "avatar", "is_active",)
+
+
+class PermissionPanelForm(forms.ModelForm):
+	permissions = None
+	management = forms.BooleanField(required=False,)
+	settings = forms.BooleanField(required=False,)
+	category = forms.BooleanField(required=False,)
+	users = forms.BooleanField(required=False,)
+	
+	class Meta:
+		model = Group
+		fields = ['name', 'management', 'settings',
+				  'category', 'users',]
