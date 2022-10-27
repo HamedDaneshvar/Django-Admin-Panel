@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import Group
 from accounts.models import CustomUser
+from .models import Category
 
 
 class ProfileForm(forms.ModelForm):
@@ -45,3 +46,9 @@ class PermissionPanelForm(forms.ModelForm):
 		model = Group
 		fields = ['name', 'management', 'settings',
 				  'category', 'users',]
+
+class CategoryPanelForm(forms.ModelForm):
+
+	class Meta:
+		model = Category
+		fields = ["name", "parent", "slug",]

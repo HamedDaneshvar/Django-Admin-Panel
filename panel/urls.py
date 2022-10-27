@@ -21,4 +21,8 @@ urlpatterns = [
 	path("admin/roles/create/", views.create_role, name="create_role"),
 	path("admin/roles/update/<int:id>/", views.update_role, name="update_role"),
 	path("admin/roles/delete/<int:id>/", views.delete_role, name="delete_role"),
+	path("admin/categories/", views.categories_list, name="categories_list"),
+	path("admin/categories/create/", views.create_category, name="create_category"),
+	path("admin/categories/update/<int:id>/", views.update_category, name="update_category"),
+	path("admin/categories/delete/<int:id>/", views.delete_category, name="delete_category"),
 ]

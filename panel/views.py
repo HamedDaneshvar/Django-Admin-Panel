@@ -13,11 +13,13 @@ from django.contrib.auth.models import (
 from django.contrib.auth.forms import PasswordChangeForm
 from accounts.models import CustomUser
 from accounts.forms import CustomUserCreationForm
+from .models import Category
 from .forms import (
 	ProfileForm,
 	CreateUserPanelForm,
 	UpdateUserPanelForm,
 	PermissionPanelForm,
+	CategoryPanelForm,
 )
 
 @login_required
@@ -246,5 +248,52 @@ def delete_role(request, id):
 	if request.method == "POST":
 		group.delete()
 		return redirect("panel:roles_list")
+	else:
+		return HttpResponse("Method not allowed!")
+
+@login_required
+def categories_list(request):
+	categories = Category.objects.all()
+
+	create_category_form = CategoryPanelForm()
+	update_category_form = CategoryPanelForm()
+
+	return render(request,
+				  "panel/categories/list.html",
+				  {"categories": categories,
+				   "create_category_form": create_category_form,
+				   "update_category_form": update_category_form,})
+
+@login_required
+def create_category(request):
+	if request.method == "POST":
+		form = CategoryPanelForm(request.POST)
+		if form.is_valid():
+			form.save()
+			return redirect("panel:categories_list")
+		else:
+			return HttpResponse("form isn't valid!")
+	else:
+		return HttpResponse("Method not allowed!")
+
+@login_required
+def update_category(request, id):
+	category = get_object_or_404(Category, id=id)
+	if request.method == "POST":
+		form = CategoryPanelForm(request.POST, instance=category)
+		if form.is_valid():
+			form.save()
+			return redirect("panel:categories_list")
+		else:
+			return HttpResponse("form isn't valid!")
+	else:
+		return HttpResponse("Method not allowed!")
+
+@login_required
+def delete_category(request, id):
+	category = get_object_or_404(Category, id=id)
+	if request.method == "POST":
+		category.delete()
+		return redirect("panel:categories_list")
 	else:
 		return HttpResponse("Method not allowed!")

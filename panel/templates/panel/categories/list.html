@@ -1,0 +1,307 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load jformat %}
+
+{% block css %}
+<!-- Bootstrap css-->
+<link href="{% static 'assets/plugins/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet"/>
+
+<!-- Icons css-->
+<link href="{% static 'assets/plugins/web-fonts/icons.css' %}" rel="stylesheet"/>
+<link href="{% static 'assets/plugins/web-fonts/font-awesome/font-awesome.min.css' %}" rel="stylesheet">
+<link href="{% static 'assets/plugins/web-fonts/plugin.css' %}" rel="stylesheet"/>
+
+<!-- Style css-->
+<link href="{% static 'assets/css-rtl/style/style.css' %}" rel="stylesheet">
+<link href="{% static 'assets/css-rtl/skins.css' %}" rel="stylesheet">
+<link href="{% static 'assets/css-rtl/dark-style.css' %}" rel="stylesheet">
+<link href="{% static 'assets/css-rtl/colors/default.css' %}" rel="stylesheet">
+
+<!-- Color css-->
+<link id="theme" rel="stylesheet" type="text/css" media="all" href="{% static 'assets/css-rtl/colors/color.css' %}">
+
+<!-- Select2 css -->
+<link href="{% static 'assets/plugins/select2/css/select2.min.css' %}" rel="stylesheet">
+
+<!-- Internal DataTables css-->
+<link href="{% static 'assets/plugins/datatable/dataTables.bootstrap4.min-rtl.css' %}" rel="stylesheet" />
+<link href="{% static 'assets/plugins/datatable/responsivebootstrap4.min.css' %}" rel="stylesheet" />
+<link href="{% static 'assets/plugins/datatable/fileexport/buttons.bootstrap4.min.css' %}" rel="stylesheet" />
+
+<!-- Sidemenu css-->
+<link href="{% static 'assets/css-rtl/sidemenu/sidemenu.css' %}" rel="stylesheet">
+
+<!-- Switcher css-->
+<link href="{% static 'assets/switcher/css/switcher-rtl.css' %}" rel="stylesheet">
+<link href="{% static 'assets/switcher/demo.css' %}" rel="stylesheet">
+{% endblock css %}
+
+{% block title %}
+دسته بندی‌ها
+{% endblock title %}
+
+{% block main-inner-content %}
+<!-- Page Header -->
+<div class="page-header">
+	<div>
+		<h2 class="main-content-title tx-24 mg-b-5"> دسته بندی‌ها </h2>
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item"><a href="{% url 'panel:home' %}">خانه</a></li>
+			<li class="breadcrumb-item active" aria-current="page">دسته بندی‌ها</li>
+		</ol>
+	</div>
+</div>
+
+
+<div class="row">
+	<div class="col-lg-12">
+		<div class="card custom-card overflow-hidden">
+			<div class="card-body">
+				<div>
+					<button class="btn btn-primary mb-3" data-toggle="modal" data-target="#modal-create">ایجاد دسته بندی جدید</button>
+					<!-- Create Modal -->
+					<div class="modal fade" id="modal-create">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h4 class="modal-title">ساخت دسته بندی جدید</h4>
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="modal-body">
+									<!-- form start -->
+									<form  method="POST" action="{% url 'panel:create_category' %}" >
+										{% csrf_token %}
+										<div class="card-body">
+											<div class="form-group">
+												<label for="id_name">نام</label>
+												{% render_field create_category_form.name class+="form-control" placeholder="نام دسته بندی را وارد کنید" required="required" %}
+											</div>
+											<div class="form-group">
+												<label for="id_slug">نشانک</label>
+												{% render_field create_category_form.slug class+="form-control" placeholder="نشانک دسته بندی را وارد کنید" required="required" %}
+											</div>
+											<div class="form-group">
+												<label for="id_parent">زیر دسته</label>
+												{% render_field create_category_form.parent class+="form-control" %}
+											</div>
+										</div>
+										<!-- /.card-body -->
+
+										<div class="card-footer">
+											<button type="submit" class="btn btn-primary">ایجاد</button>
+										</div>
+									</form>
+								</div>
+							</div>
+							<!-- /.modal-content -->
+						</div>
+						<!-- /.modal-dialog -->
+					</div>
+				</div>
+				<div class="table-responsive">
+					<table id="table" class="table table-bordered table-striped text-center">
+						<thead>
+							<tr>
+								<th>نام دسته بندی</th>
+								<th>زیر دسته</th>
+								<th>نشانک</th>
+								<th>عملیات</th>
+							</tr>
+						</thead>
+						<tbody >
+						{% for category in categories %}
+							<tr>
+								<td>{{ category.name }}</td>
+								<td>
+									{% if category.parent %}
+									{{ category.parent.name }}
+									{% else %}
+									-
+									{% endif %}
+								</td>
+								<td>{{ category.slug }}</td>
+								<td class="text-center">
+									<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<i class="fas fa-sliders-h"></i>
+									</button>
+									<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+										<button type="button" class="btn btn-success dropdown-item" data-toggle="modal" data-target="#modal-edit{{ category.id }}" >ویرایش</button>
+										<button type="button" class="dropdown-item" data-toggle="modal" data-target="#modal-delete{{ category.id }}" style="color:red;" >حذف</button>
+									</div>
+								</td>
+
+							</tr>
+							<!-- Delete Modal -->
+							<div class="modal fade" id="modal-delete{{ category.id }}">
+								<div class="modal-dialog">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h4 class="modal-title">حذف دسته بندی</h4>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+											<h5>آیا در حذف "{{ category.name }}" مطمئن هستید؟ </h5>
+										</div>
+										<div class="modal-footer justify-content-between">
+											<button type="button" class="btn btn-secondary" data-dismiss="modal">بستن</button>
+											<form action="{% url 'panel:delete_category' category.id %}" method="POST">
+												{% csrf_token %}
+												<button type="submit" class="btn btn-danger">حذف</button>
+											</form>
+
+										</div>
+									</div>
+									<!-- /.modal-content -->
+								</div>
+								<!-- /.modal-dialog -->
+							</div>
+							<!-- /.modal -->
+
+							<!-- Change Modal -->
+							<div class="modal fade" id="modal-edit{{ category.id }}">
+								<div class="modal-dialog">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h4 class="modal-title">ویرایش دسته بندی</h4>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+											<!-- form start -->
+											<form  method="POST" action="{% url 'panel:update_category' category.id %}">
+												{% csrf_token %}
+												<div class="card-body">
+													<div class="form-group">
+														<label for="id_name">نام</label>
+														<input type="text" name="name" maxlength="250" class="form-control" required="" placeholder="نام دسته بندی را وارد کنید" value="{{ category.name }}" id="id_name">
+													</div>
+													<div class="form-group">
+														<label for="id_slug">نشانک</label>
+														<input type="text" name="slug" maxlength="250" class="form-control" required="" placeholder="نشانک دسته بندی را وارد کنید" value="{{ category.slug }}" id="id_slug">
+													</div>
+													<div class="form-group">
+														<label for="id_parent">زیر دسته</label>
+														<select name="parent" class="form-control" id="id_parent">
+															{% if category.parent %}
+																<option value="">---------</option>
+																<option value="{{ category.parent.id }}" selected="">{{ category.parent.name }}</option>
+															{% else %}
+																<option value="" selected="">---------</option>
+															{% endif %}	
+															{% for parent_category in categories %}
+																{% if parent_category != category and parent_category != category.parent %}
+																	<option value="{{ parent_category }}">{{ parent_category.name }}</option>
+																{% endif %}
+															{% endfor %}
+														</select>
+													</div>
+												</div>
+												<!-- /.card-body -->
+
+												<div class="card-footer">
+													<button type="submit" class="btn btn-primary">ویرایش</button>
+												</div>
+											</form>
+										</div>
+									</div>
+									<!-- /.modal-content -->
+								</div>
+								<!-- /.modal-dialog -->
+							</div>
+							<!-- /.modal -->
+
+						{% endfor %}
+
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock main-inner-content %}
+
+{% block js %}
+<!-- Jquery js-->
+<script src="{% static 'assets/plugins/jquery/jquery.min.js' %}"></script>
+
+<!-- Bootstrap js-->
+<script src="{% static 'assets/plugins/bootstrap/js/popper.min.js' %}"></script>
+<script src="{% static 'assets/plugins/bootstrap/js/bootstrap-rtl.js' %}"></script>
+
+<!-- Perfect-scrollbar js -->
+<script src="{% static 'assets/plugins/perfect-scrollbar/perfect-scrollbar.min-rtl.js' %}"></script>
+
+<!-- Sidemenu js -->
+<script src="{% static 'assets/plugins/sidemenu/sidemenu-rtl.js' %}"></script>
+
+<!-- Sidebar js -->
+<script src="{% static 'assets/plugins/sidebar/sidebar-rtl.js' %}"></script>
+
+<!-- Select2 js-->
+<script src="{% static 'assets/plugins/select2/js/select2.min.js' %}"></script>
+
+<!-- Internal Data Table js -->
+<script src="{% static 'assets/plugins/datatable/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/fileexport/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/fileexport/buttons.bootstrap4.min.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/fileexport/jszip.min.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/fileexport/pdfmake.min.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/fileexport/vfs_fonts.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/fileexport/buttons.html5.min.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/fileexport/buttons.print.min.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/fileexport/buttons.colVis.min.js' %}"></script>
+<script src="{% static 'assets/js/table-data.js' %}"></script>
+
+<!-- Sticky js -->
+<script src="{% static 'assets/js/sticky.js' %}"></script>
+
+<!-- Custom js -->
+<script src="{% static 'assets/js/custom.js' %}"></script>
+
+<!-- Switcher js -->
+<script src="{% static 'assets/switcher/js/switcher-rtl.js' %}"></script>
+{% endblock js %}
+
+{% block domready %}
+<script>
+    $(function () {
+        $("#table").DataTable({
+            "responsive": true,
+            "autoWidth": false,
+            "rtl" : true,
+            "language": {
+                "paginate": {
+                    "previous": "قبلی",
+                    "next" : "بعدی"
+                },
+                "sLengthMenu": "تعداد رکورد در صفحه _MENU_ ",
+                "sSearch" : "جستجو:",
+                "emptyTable":     "هیچ داده ای برای نمایش موجود نیست",
+                "info":           "نمایش _START_ تا _END_ از _TOTAL_ رکورد",
+                "infoEmpty":      "نمایش 0 تا 0 از 0 رکورد",
+
+                "infoFiltered":   "(نتیجه جستجو بین _MAX_ رکورد)",
+                "zeroRecords":    "اطلاعاتی مبنی بر جستجو شما موجود نیست...",
+            },
+
+
+
+        });
+    });
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+
+	$(function(){
+		$("ul.pagination").css("justify-content", "start")
+	});
+</script>
+{% endblock domready %}
