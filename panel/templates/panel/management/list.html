@@ -165,10 +165,10 @@
 										<i class="fas fa-sliders-h"></i>
 									</button>
 									<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-										<button type="button" class="btn btn-success dropdown-item" data-toggle="modal" data-target="#modal-edit{{management_user.id}}" ><i  class="fas fa-user-edit"></i>ویرایش</button>
+										<button type="button" class="btn btn-success dropdown-item" data-toggle="modal" data-target="#modal-edit{{management_user.id}}" ><i style="padding-left:5px" class="fas fa-user-edit"></i>ویرایش</button>
 										
 										{% if management_user != user %}
-											<button type="button" class="dropdown-item" data-toggle="modal" data-target="#modal-delete{{management_user.id}}" ><i style="color:red" class="fas fa-user-minus"></i>حذف</button>
+											<button type="button" class="dropdown-item" data-toggle="modal" data-target="#modal-delete{{management_user.id}}" style="color:red;" ><i style="color:red;padding-left:5px" class="fas fa-user-minus"></i>حذف</button>
 										{% endif %}
 											
 									</div>
