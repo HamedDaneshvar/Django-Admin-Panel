@@ -54,7 +54,8 @@ $(function() {
 			}
 		}
 	}
-	var current = location.pathname.split("/").slice(-1)[0].replace(/^\/|\/$/g, '');
+	// var current = location.pathname.split("/").slice(-1)[0].replace(/^\/|\/$/g, '');
+	var current = location.pathname;
 	$('.main-sidebar .nav li a').each(function() {
 		var $this = $(this);
 		addActiveClass($this);
