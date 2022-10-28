@@ -77,21 +77,25 @@
 										<div class="card-body">
 											<div class="form-group">
 												<label for="id_full_name">نام</label>
-												{% render_field create_user_form.full_name class+="form-control" placeholder="نام کاربر را وارد کنید" required="required" %}
+												{% render_field create_staffuser_form.full_name class+="form-control" placeholder="نام کاربر را وارد کنید" required="required" %}
 											</div>
 											<div class="form-group">
 												<label for="id_email">پست الکترونیک</label>
-												{% render_field create_user_form.email class+="form-control" placeholder="ایمیل کاربر را وارد کنید" required="required" %}
+												{% render_field create_staffuser_form.email class+="form-control" placeholder="ایمیل کاربر را وارد کنید" required="required" %}
 											</div>
 											<div class="form-group">
 												<label for="id_password1">کلمه عبور</label>
-												{% render_field create_user_form.password1 class+="form-control" placeholder="رمز ورود کاربر را وارد کنید" required="required" %}
+												{% render_field create_staffuser_form.password1 class+="form-control" placeholder="رمز ورود کاربر را وارد کنید" required="required" %}
+											</div>
+											<div class="form-group">
+												<label for="id_roles">نقش</label>
+												{% render_field create_staffuser_form.roles class+="form-control" %}
 											</div>
 											<div class="form-group">
 												<label for="id_avatar">تصویر پروفایل</label>
 												<div class="input-group">
 													<div class="custom-file">
-														{% render_field create_user_form.avatar class+="custom-file-input" %}
+														{% render_field create_staffuser_form.avatar class+="custom-file-input" %}
 														<label class="custom-file-label" for="id_avatar">Choose file</label>
 													</div>
 												</div>
@@ -118,6 +122,7 @@
 								<th>نام و نام خانوادگی</th>
 								<th>نام نمایشی</th>
 								<th>ایمیل</th>
+								<th>نقش</th>
 								<th>تاریخ عضویت</th>
 								<th>عملیات</th>
 							</tr>
@@ -135,6 +140,21 @@
 								<td>{{ management_user.full_name }} </td>
 								<td>{{ management_user.nick_name }} </td>
 								<td>{{ management_user.email }}</td>
+
+								<td>
+									
+									{% if management_user.is_superuser %}
+										دسترسی کامل
+									{% else %}
+										{% if management_user.groups.all %}
+											{{ management_user.groups.all.0 }}
+										{% else %}
+											-
+										{% endif %}
+									{% endif %}
+										
+								</td>
+
 								<td >
 									<button class="btn btn-secondary" data-toggle="tooltip" data-placement="top" title="{{ management_user.create_at|jformat:'%A، %d %B %Y - %H:%M:%S' }}">
 										{{ management_user.create_at|jformat:"%A، %d %B %Y" }}
@@ -207,46 +227,6 @@
 											<!-- form start -->
 											<form  method="POST" action="{% url 'panel:update_staff_user' management_user.id %}"  enctype="multipart/form-data">
 												{% csrf_token %}
-												{% comment %} <div class="card-body">
-													<div class="form-group">
-														<label for="id_nick_name">نام نمایشی</label>
-														{% render_field update_user_form.nick_name class+="form-control" placeholder="نام  نمایشی کاربر را وارد کنید" %}
-													</div>
-													<div class="form-group">
-														<label for="id_full_name">نام و نام خانوادگی</label>
-														{% render_field update_user_form.full_name class+="form-control" placeholder="نام و نام خانوادگی کاربر را وارد کنید" %}
-													</div>
-													<div class="form-group">
-														<label for="id_email">پست الکترونیک</label>
-														{% render_field update_user_form.email class+="form-control" placeholder="ایمیل کاربر را وارد کنید" required="required" %}
-													</div>
-													<div class="form-group">
-														<label for="id_password">کلمه عبور</label>
-														{% render_field update_user_form.password class+="form-control" placeholder="کلمه عبور کاربر را وارد کنید" %}
-													</div>
-													<div class="form-group">
-														<label for="id_phone">تلفن</label>
-														{% render_field update_user_form.phone class+="form-control" placeholder="شماره تلفن کاربر را وارد کنید" %}
-													</div>
-													<div class="form-group">
-														<label for="id_address">آدرس</label>
-														{% render_field update_user_form.address class+="form-control" placeholder="آدرس کاربر را وارد کنید" %}
-													</div>
-													<div class="form-group">
-														<label for="id_avatar">تصویر پروفایل</label>
-														<div class="input-group">
-															<div class="custom-file">
-																{% render_field update_user_form.avatar class+="custom-file-input" %}
-																<label class="custom-file-label" for="id_avatar">Choose file</label>
-															</div>
-														</div>
-													</div>
-													<div class="form-group row row-sm">
-														<div class="mg-t-20 mg-lg-t-0">
-															<label class="ckbox">{% render_field update_user_form.is_active %}<span>فعال بودن</span></label>
-														</div>
-													</div>
-												</div> {% endcomment %}
 												<div class="card-body">
 													<div class="form-group">
 														<label for="id_nick_name">نام نمایشی</label>
@@ -264,6 +244,29 @@
 														<label for="id_password">کلمه عبور</label>
 														<input type="password" name="password" class="form-control" placeholder="کلمه عبور کاربر را وارد کنید" id="id_password">
 													</div>
+													
+													{% if management_user != user %}
+													<div class="form-group">
+														<label for="id_roles">نقش</label>
+														<select name="roles" class="form-control" id="id_roles">
+															{% with user_group=management_user.groups.all.0 %}
+																{% if user_group %}
+																	<option value="">---------</option>
+																	<option value="{{ user_group.id }}" selected="">{{ user_group.name }}</option>
+																{% else %}
+																	<option value="" selected="">---------</option>
+																{% endif %}
+															{% endwith %}
+
+															{% for group in groups %}
+																{% if group != management_user.groups.all.0 %}
+																	<option value="{{ group.id }}">{{ group.name }}</option>
+																{% endif %}
+															{% endfor %}
+														</select>
+													</div>
+													{% endif %}
+
 													<div class="form-group">
 														<label for="id_phone">تلفن</label>
 														<input type="text" name="phone" maxlength="13" class="form-control" placeholder="شماره تلفن کاربر را وارد کنید" {% if management_user.phone %} value="{{ management_user.phone }}" {% endif %} id="id_phone">
@@ -281,11 +284,13 @@
 															</div>
 														</div>
 													</div>
+													{% if management_user != user %}
 													<div class="form-group row row-sm">
 														<div class="mg-t-20 mg-lg-t-0">
 															<label for="id_is_active" class="ckbox"><input {% if management_user.is_active %}checked{% endif %} type="checkbox" name="is_active" id="id_is_active"><span>فعال بودن</span></label>
 														</div>
 													</div>
+													{% endif %}
 												</div>
 												<!-- /.card-body -->
 

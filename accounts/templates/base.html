@@ -190,8 +190,10 @@
 		<div class="main-sidebar-body">
 			<ul class="nav">
 				<li class="nav-item">
-					<a class="nav-link" href="#"><span class="shape1"></span><span class="shape2"></span><i class="fa fa-home sidemenu-icon"></i><span class="sidemenu-label">خانه</span></a>
+					<a class="nav-link" href="{% url 'panel:home' %}"><span class="shape1"></span><span class="shape2"></span><i class="fa fa-home sidemenu-icon"></i><span class="sidemenu-label">خانه</span></a>
 				</li>
+
+				{% if 'accounts.can_manage_categories' in perms %}
 				<li class="nav-item">
 					<a class="nav-link with-sub" href="#"><span class="shape1"></span><span class="shape2"></span><i class="fas fa-clipboard-list sidemenu-icon"></i><span class="sidemenu-label">دسته بندی‌ها</span><i class="angle fe fe-chevron-left"></i></a>
 					<ul class="nav-sub">
@@ -200,6 +202,10 @@
 						</li>
 					</ul>
 				</li>
+				{% endif %}
+
+				
+				{% if 'accounts.can_manage_staff_users' in perms %}
 				<li class="nav-item">
 					<a class="nav-link with-sub" href="#"><span class="shape1"></span><span class="shape2"></span><i class="fas fa-user-shield sidemenu-icon"></i><span class="sidemenu-label">مدیریت</span><i class="angle fe fe-chevron-left"></i></a>
 					<ul class="nav-sub">
@@ -211,6 +217,10 @@
 						</li>
 					</ul>
 				</li>
+				{% endif %}
+				
+				
+				{% if 'accounts.can_manage_simple_users' in perms %}
 				<li class="nav-item active show">
 					<a class="nav-link with-sub" href=""><span class="shape1"></span><span class="shape2"></span><i class="fas fa-users sidemenu-icon"></i><span class="sidemenu-label">مدیریت کاربران</span><i class="angle fe fe-chevron-left"></i></a>
 					<ul class="nav-sub">
@@ -219,6 +229,9 @@
 						</li>
 					</ul>
 				</li>
+				{% endif %}
+					
+				
 				<li class="nav-item">
 					<a class="nav-link with-sub" href="#"><span class="shape1"></span><span class="shape2"></span><i class="fas fa-user sidemenu-icon"></i><span class="sidemenu-label">پروفایل</span><i class="angle fe fe-chevron-left"></i></a>
 					<ul class="nav-sub">

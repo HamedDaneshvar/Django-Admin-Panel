@@ -10,6 +10,7 @@ from django.contrib.auth.models import (
 	Group,
 	Permission,
 )
+from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.forms import PasswordChangeForm
 from accounts.models import CustomUser
 from accounts.forms import CustomUserCreationForm
@@ -20,6 +21,8 @@ from .forms import (
 	UpdateUserPanelForm,
 	PermissionPanelForm,
 	CategoryPanelForm,
+	CreateStaffUserForm,
+	UpdateStaffUserForm,
 )
 
 @login_required
@@ -46,6 +49,7 @@ def profile(request):
 
 
 @login_required
+@permission_required("accounts.can_manage_simple_users", raise_exception=True,)
 def users_list(request):
 	users = CustomUser.objects.filter(is_superuser=False,
 									  is_staff=False,)
@@ -59,6 +63,7 @@ def users_list(request):
 				   "update_user_form": update_user_from,})
 
 @login_required
+@permission_required("accounts.can_manage_simple_users", raise_exception=True,)
 def create_user(request):
 	if request.method == "POST":
 		form = CustomUserCreationForm(request.POST, request.FILES)
@@ -74,6 +79,7 @@ def create_user(request):
 		return HttpResponse("Method not allowed!")
 
 @login_required
+@permission_required("accounts.can_manage_simple_users", raise_exception=True,)
 def update_user(request, id):
 	user = get_object_or_404(CustomUser, id=id)
 
@@ -89,6 +95,7 @@ def update_user(request, id):
 		return HttpResponse("Method not allowed!")
 
 @login_required
+@permission_required("accounts.can_manage_simple_users", raise_exception=True,)
 def delete_user(request, id):
 	user = get_object_or_404(CustomUser, id=id)
 	if request.method == "POST":
@@ -99,26 +106,30 @@ def delete_user(request, id):
 
 
 @login_required
+@permission_required("accounts.can_manage_staff_users", raise_exception=True,)
 def management_users_list(request):
 	if request.user.is_superuser:
 		users = CustomUser.objects.filter(Q(is_staff=True) |
 									  	  Q(is_superuser=True))
 	else:
-		users = CustomUser.objects.filter(is_staff=True)
+		users = CustomUser.objects.filter(Q(is_staff=True) &
+									  	  Q(is_superuser=False))
 
-	create_user_form = CreateUserPanelForm()
-	update_user_from = UpdateUserPanelForm()
+	groups = Group.objects.all()
+	create_staffuser_form = CreateStaffUserForm()
+	update_staffuser_form = UpdateStaffUserForm()
 	return render(request,
 				  "panel/management/list.html",
 				  {"users": users,
-				   "create_user_form": create_user_form,
-				   "update_user_form": update_user_from,})
-
+				   "groups": groups,
+				   "create_staffuser_form": create_staffuser_form,
+				   "update_staffuser_form": update_staffuser_form,})
 
 @login_required
+@permission_required("accounts.can_manage_staff_users", raise_exception=True,)
 def create_staff_user(request):
 	if request.method == "POST":
-		form = CustomUserCreationForm(request.POST, request.FILES)
+		form = CreateStaffUserForm(request.POST, request.FILES)
 		if form.is_valid():
 			email = form.cleaned_data.get("email")
 			full_name = form.cleaned_data.get("full_name")
@@ -132,21 +143,28 @@ def create_staff_user(request):
 		return HttpResponse("Method not allowed!")
 
 @login_required
+@permission_required("accounts.can_manage_staff_users", raise_exception=True,)
 def update_staff_user(request, id):
 	user = get_object_or_404(CustomUser, id=id)
 
 	if request.method == "POST":
-		form = UpdateUserPanelForm(request.POST, request.FILES, instance=user)
+		form = UpdateStaffUserForm(request.POST, request.FILES, instance=user)
 		if form.is_valid():
 			user = form.save(commit=False)
-			if form.cleaned_data['password']:
+			if form.cleaned_data['password'] != '':
 				user.set_password(form.cleaned_data['password'])
+			if form.cleaned_data['roles']:
+				group = form.cleaned_data['roles']
+				user.groups.add(group)
+			else:
+				user.groups.clear()
 			user.save()
 			return redirect("panel:management_users_list")
 	else:
 		return HttpResponse("Method not allowed!")
 
 @login_required
+@permission_required("accounts.can_manage_staff_users", raise_exception=True,)
 def delete_staff_user(request, id):
 	user = get_object_or_404(CustomUser, id=id)
 
@@ -161,6 +179,7 @@ def delete_staff_user(request, id):
 
 
 @login_required
+@permission_required("accounts.can_manage_staff_users", raise_exception=True,)
 def roles_list(request):
 	groups = Group.objects.all()
 	create_group_form = PermissionPanelForm()
@@ -172,6 +191,7 @@ def roles_list(request):
 				   "update_group_form": update_group_form,})
 
 @login_required
+@permission_required("accounts.can_manage_staff_users", raise_exception=True,)
 def create_role(request):
 	if request.method == "POST":
 		form = PermissionPanelForm(request.POST)
@@ -203,6 +223,7 @@ def create_role(request):
 		return HttpResponse("Method not allowed!")
 
 @login_required
+@permission_required("accounts.can_manage_staff_users", raise_exception=True,)
 def update_role(request, id):
 	group = get_object_or_404(Group, id=id)
 	if request.method == "POST":
@@ -242,6 +263,7 @@ def update_role(request, id):
 		return HttpResponse("Method not allowed!")
 
 @login_required
+@permission_required("accounts.can_manage_staff_users", raise_exception=True,)
 def delete_role(request, id):
 	group = get_object_or_404(Group, id=id)
 
@@ -252,6 +274,7 @@ def delete_role(request, id):
 		return HttpResponse("Method not allowed!")
 
 @login_required
+@permission_required("accounts.can_manage_categories", raise_exception=True,)
 def categories_list(request):
 	categories = Category.objects.all()
 
@@ -265,6 +288,7 @@ def categories_list(request):
 				   "update_category_form": update_category_form,})
 
 @login_required
+@permission_required("accounts.can_manage_categories", raise_exception=True,)
 def create_category(request):
 	if request.method == "POST":
 		form = CategoryPanelForm(request.POST)
@@ -277,6 +301,7 @@ def create_category(request):
 		return HttpResponse("Method not allowed!")
 
 @login_required
+@permission_required("accounts.can_manage_categories", raise_exception=True,)
 def update_category(request, id):
 	category = get_object_or_404(Category, id=id)
 	if request.method == "POST":
@@ -290,6 +315,7 @@ def update_category(request, id):
 		return HttpResponse("Method not allowed!")
 
 @login_required
+@permission_required("accounts.can_manage_categories", raise_exception=True,)
 def delete_category(request, id):
 	category = get_object_or_404(Category, id=id)
 	if request.method == "POST":

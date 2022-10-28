@@ -15,6 +15,28 @@ class ProfileForm(forms.ModelForm):
 				  "email", "address", "avatar",)
 
 
+class CreateStaffUserForm(UserCreationForm):
+	password2 = None
+	roles = forms.ModelChoiceField(queryset=Group.objects.all(), required=False)
+	
+	class Meta:
+		model = CustomUser
+		fields = ("email", "full_name", "roles",)
+
+
+class UpdateStaffUserForm(forms.ModelForm):
+	password = forms.CharField(widget=forms.PasswordInput(),
+							   required=False,)
+	address = forms.CharField(widget=forms.Textarea(attrs={"rows":2}),
+							  required=False,)
+	roles = forms.ModelChoiceField(queryset=Group.objects.all(), required=False)
+
+	class Meta:
+		model = CustomUser
+		fields = ("nick_name", "full_name", "password", "phone",
+				  "email", "address", "avatar", "is_active", "roles",)
+
+
 class CreateUserPanelForm(UserCreationForm):
 	password2 = None
 
