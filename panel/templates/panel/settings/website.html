@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+
+{% block title %}
+تنظیمات وب سایت
+{% endblock title %}
+
+
+{% block main-inner-content %}
+<!-- Page Header -->
+<div class="page-header">
+	<div>
+		<h2 class="main-content-title tx-24 mg-b-5"> وبسایت </h2>
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item"><a href="{% url 'panel:home' %}">خانه</a></li>
+			<li class="breadcrumb-item active" aria-current="page">تنظیمات</li>
+			<li class="breadcrumb-item active" aria-current="page">وبسایت</li>
+		</ol>
+	</div>
+</div>
+
+
+<div class="row">
+	<div class="col-lg-12">
+		<div class="card custom-card">
+			<form role="form" action="{% url 'panel:website_settings' %}" method="post" enctype="multipart/form-data">
+				{% csrf_token %}
+				<div class="card-body">
+					<div class="form-group">
+						<label for="id_name">نام وبسایت</label>
+						{% render_field form.name class+="form-control" placeholder="نام وب سایتتان وارد کنید" required="required" %}
+					</div>
+					<div class="form-group">
+						<label for="id_url">آدرس وبسایت</label>
+						{% render_field form.url class+="form-control" placeholder="آدرس وب سایتتان وارد کنید" required="required" %}
+					</div>
+					<div class="form-group">
+						<label for="id_logo">لوگو وب سایت</label>
+						<div class="input-group">
+							<div class="custom-file">
+								{% render_field form.logo class+="custom-file-input" %}
+								<label class="custom-file-label" for="id_logo">Choose file</label>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="id_favicon">فاوآیکون وب سایت</label>
+						<div class="input-group">
+							<div class="custom-file">
+								{% render_field form.favicon class+="custom-file-input" %}
+								<label class="custom-file-label" for="id_favicon">Choose file</label>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- /.card-body -->
+
+				<div class="card-footer">
+					<button type="submit" class="btn btn-primary">ویرایش</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+{% endblock main-inner-content %}

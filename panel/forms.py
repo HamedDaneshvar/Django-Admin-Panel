@@ -2,7 +2,12 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import Group
 from accounts.models import CustomUser
-from .models import Category
+from .models import (
+	Category,
+	Settings,
+	AboutUs,
+	ContactUs,
+)
 
 
 class ProfileForm(forms.ModelForm):
@@ -74,3 +79,24 @@ class CategoryPanelForm(forms.ModelForm):
 	class Meta:
 		model = Category
 		fields = ["name", "parent", "slug",]
+
+
+class SettingsPanelForm(forms.ModelForm):
+
+	class Meta:
+		model = Settings
+		fields = ["name", "url", "logo", "favicon"]
+
+
+class AboutUsPanelForm(forms.ModelForm):
+
+	class Meta:
+		model = AboutUs
+		fields = ["text", "email", "phone",]
+
+
+class ContactUsPanelForm(forms.ModelForm):
+
+	class Meta:
+		model = ContactUs
+		fields = ["full_name", "email", "phone", "text",]

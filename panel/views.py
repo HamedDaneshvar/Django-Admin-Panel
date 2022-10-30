@@ -14,8 +14,14 @@ from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.forms import PasswordChangeForm
 from accounts.models import CustomUser
 from accounts.forms import CustomUserCreationForm
-from .models import Category
+from .models import (
+	Category,
+	Settings,
+	AboutUs,
+	ContactUs,
+)
 from .forms import (
+	AboutUsPanelForm,
 	ProfileForm,
 	CreateUserPanelForm,
 	UpdateUserPanelForm,
@@ -23,6 +29,7 @@ from .forms import (
 	CategoryPanelForm,
 	CreateStaffUserForm,
 	UpdateStaffUserForm,
+	SettingsPanelForm,
 )
 
 @login_required
@@ -323,3 +330,43 @@ def delete_category(request, id):
 		return redirect("panel:categories_list")
 	else:
 		return HttpResponse("Method not allowed!")
+
+
+@login_required
+@permission_required("can_manage_website_settings", raise_exception=True,)
+def website_settings(request):
+	setting = Settings.objects.first()
+	if request.method == "POST":
+		form = SettingsPanelForm(request.POST, request.FILES, instance=setting)
+		if form.is_valid():
+			form.save()
+	else:
+		form = SettingsPanelForm(instance=setting)
+	
+	return render(request,
+				  "panel/settings/website.html",
+				  {"form": form,})
+
+@login_required
+@permission_required("can_manage_website_settings", raise_exception=True,)
+def aboutus_settings(request):
+	aboutus = AboutUs.objects.first()
+	if request.method == "POST":
+		form = AboutUsPanelForm(request.POST, instance=aboutus)
+		if form.is_valid():
+			form.save()
+	else:
+		form = AboutUsPanelForm(instance=aboutus)
+	
+	return render(request,
+				  "panel/settings/aboutus.html",
+				  {"form": form,})
+
+@login_required
+@permission_required("can_manage_website_settings", raise_exception=True,)
+def contactus_settings_list(request):
+	contactus_list = ContactUs.objects.all().order_by("create_at")
+
+	return render(request,
+				  "panel/settings/contactus_list.html",
+				  {"contactus_list": contactus_list,})

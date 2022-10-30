@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load jformat %}
+
+{% block css %}
+<!-- Bootstrap css-->
+<link href="{% static 'assets/plugins/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet"/>
+
+<!-- Icons css-->
+<link href="{% static 'assets/plugins/web-fonts/icons.css' %}" rel="stylesheet"/>
+<link href="{% static 'assets/plugins/web-fonts/font-awesome/font-awesome.min.css' %}" rel="stylesheet">
+<link href="{% static 'assets/plugins/web-fonts/plugin.css' %}" rel="stylesheet"/>
+
+<!-- Style css-->
+<link href="{% static 'assets/css-rtl/style/style.css' %}" rel="stylesheet">
+<link href="{% static 'assets/css-rtl/skins.css' %}" rel="stylesheet">
+<link href="{% static 'assets/css-rtl/dark-style.css' %}" rel="stylesheet">
+<link href="{% static 'assets/css-rtl/colors/default.css' %}" rel="stylesheet">
+
+<!-- Color css-->
+<link id="theme" rel="stylesheet" type="text/css" media="all" href="{% static 'assets/css-rtl/colors/color.css' %}">
+
+<!-- Select2 css -->
+<link href="{% static 'assets/plugins/select2/css/select2.min.css' %}" rel="stylesheet">
+
+<!-- Internal DataTables css-->
+<link href="{% static 'assets/plugins/datatable/dataTables.bootstrap4.min-rtl.css' %}" rel="stylesheet" />
+<link href="{% static 'assets/plugins/datatable/responsivebootstrap4.min.css' %}" rel="stylesheet" />
+<link href="{% static 'assets/plugins/datatable/fileexport/buttons.bootstrap4.min.css' %}" rel="stylesheet" />
+
+<!-- Sidemenu css-->
+<link href="{% static 'assets/css-rtl/sidemenu/sidemenu.css' %}" rel="stylesheet">
+
+<!-- Switcher css-->
+<link href="{% static 'assets/switcher/css/switcher-rtl.css' %}" rel="stylesheet">
+<link href="{% static 'assets/switcher/demo.css' %}" rel="stylesheet">
+{% endblock css %}
+
+{% block title %}
+تماس با ما
+{% endblock title %}
+
+{% block main-inner-content %}
+<!-- Page Header -->
+<div class="page-header">
+	<div>
+		<h2 class="main-content-title tx-24 mg-b-5"> تماس با ما </h2>
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item"><a href="{% url 'panel:home' %}">خانه</a></li>
+			<li class="breadcrumb-item active" aria-current="page">تنظیمات</li>
+			<li class="breadcrumb-item active" aria-current="page">تماس با ما</li>
+		</ol>
+	</div>
+</div>
+
+
+<div class="row">
+	<div class="col-lg-12">
+		<div class="card custom-card overflow-hidden">
+			<div class="card-body">
+				<div class="table-responsive">
+					<table id="table" class="table table-bordered table-striped text-center">
+						<thead>
+							<tr>
+								<th>نام و نام خانوادگی</th>
+								<th>ایمیل</th>
+								<th>شماره تماس</th>
+								<th>متن</th>
+								<th>عملیات</th>
+							</tr>
+						</thead>
+						<tbody >
+						{% for contactus_item in contactus_list %}
+							<tr>
+								<td >{{ contactus_item.full_name }} </td>
+								<td >{{ contactus_item.email }}</td>
+								<td >
+									{% if contactus_item.phone %}
+										{{ contactus_item.phone }} 
+									{% else %}
+										-
+									{% endif %}
+								</td>
+								<td title="{{ contactus_item.text }}" >{{ contactus_item.short_text|truncatewords:5 }}</td>
+								<td class="text-center">
+									<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										<i class="fas fa-sliders-h"></i>
+									</button>
+									<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+										<button type="button" class="btn btn-success dropdown-item" data-toggle="modal" data-target="#observe-modal{{contact_us.id}}" ><i style="padding-left:5px" class="fas fa-eye"></i>نمایش</button>
+									</div>
+								</td>
+
+							</tr>
+							<!-- Observe Modal -->
+							<div class="modal fade" id="observe-modal{{ management_user.id }}">
+								<div class="modal-dialog">
+									<div class="modal-content">
+										<div class="modal-header">
+											<h4 class="modal-title">نمایش متن</h4>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+											<p>{{ contactus_item.text }}</p>
+										</div>
+										<div class="modal-footer justify-content-between">
+											<button type="button" class="btn btn-secondary" data-dismiss="modal">بستن</button>
+										</div>
+									</div>
+									<!-- /.modal-content -->
+								</div>
+								<!-- /.modal-dialog -->
+							</div>
+							<!-- /.modal -->
+
+						{% endfor %}
+
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock main-inner-content %}
+
+{% block js %}
+<!-- Jquery js-->
+<script src="{% static 'assets/plugins/jquery/jquery.min.js' %}"></script>
+
+<!-- Bootstrap js-->
+<script src="{% static 'assets/plugins/bootstrap/js/popper.min.js' %}"></script>
+<script src="{% static 'assets/plugins/bootstrap/js/bootstrap-rtl.js' %}"></script>
+
+<!-- Perfect-scrollbar js -->
+<script src="{% static 'assets/plugins/perfect-scrollbar/perfect-scrollbar.min-rtl.js' %}"></script>
+
+<!-- Sidemenu js -->
+<script src="{% static 'assets/plugins/sidemenu/sidemenu-rtl.js' %}"></script>
+
+<!-- Sidebar js -->
+<script src="{% static 'assets/plugins/sidebar/sidebar-rtl.js' %}"></script>
+
+<!-- Select2 js-->
+<script src="{% static 'assets/plugins/select2/js/select2.min.js' %}"></script>
+
+<!-- Internal Data Table js -->
+<script src="{% static 'assets/plugins/datatable/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/fileexport/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/fileexport/buttons.bootstrap4.min.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/fileexport/jszip.min.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/fileexport/pdfmake.min.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/fileexport/vfs_fonts.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/fileexport/buttons.html5.min.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/fileexport/buttons.print.min.js' %}"></script>
+<script src="{% static 'assets/plugins/datatable/fileexport/buttons.colVis.min.js' %}"></script>
+<script src="{% static 'assets/js/table-data.js' %}"></script>
+
+<!-- Sticky js -->
+<script src="{% static 'assets/js/sticky.js' %}"></script>
+
+<!-- Custom js -->
+<script src="{% static 'assets/js/custom.js' %}"></script>
+
+<!-- Switcher js -->
+<script src="{% static 'assets/switcher/js/switcher-rtl.js' %}"></script>
+{% endblock js %}
+
+{% block domready %}
+<script>
+    $(function () {
+        $("#table").DataTable({
+            "responsive": true,
+            "autoWidth": false,
+            "rtl" : true,
+            "language": {
+                "paginate": {
+                    "previous": "قبلی",
+                    "next" : "بعدی"
+                },
+                "sLengthMenu": "تعداد رکورد در صفحه _MENU_ ",
+                "sSearch" : "جستجو:",
+                "emptyTable":     "هیچ داده ای برای نمایش موجود نیست",
+                "info":           "نمایش _START_ تا _END_ از _TOTAL_ رکورد",
+                "infoEmpty":      "نمایش 0 تا 0 از 0 رکورد",
+
+                "infoFiltered":   "(نتیجه جستجو بین _MAX_ رکورد)",
+                "zeroRecords":    "اطلاعاتی مبنی بر جستجو شما موجود نیست...",
+            },
+
+
+
+        });
+    });
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
+
+	$(function(){
+		$("ul.pagination").css("justify-content", "start")
+	});
+</script>
+{% endblock domready %}

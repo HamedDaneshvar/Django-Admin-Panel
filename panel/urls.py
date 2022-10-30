@@ -25,4 +25,7 @@ urlpatterns = [
 	path("admin/categories/create/", views.create_category, name="create_category"),
 	path("admin/categories/update/<int:id>/", views.update_category, name="update_category"),
 	path("admin/categories/delete/<int:id>/", views.delete_category, name="delete_category"),
+	path("settings/website/", views.website_settings, name="website_settings"),
+	path("settings/aboutus/", views.aboutus_settings, name="aboutus_settings"),
+	path("settings/contactus/", views.contactus_settings_list, name="contactus_settings_list"),
 ]
