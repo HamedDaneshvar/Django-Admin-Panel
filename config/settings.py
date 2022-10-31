@@ -48,6 +48,9 @@ INSTALLED_APPS = [
     'home.apps.HomeConfig',
 	'accounts.apps.AccountsConfig',
     'panel.apps.PanelConfig',
+
+    # third-party
+    'django_cleanup.apps.CleanupConfig',
 ]
 
 MIDDLEWARE = [
