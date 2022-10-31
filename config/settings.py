@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     # third-party
 	'widget_tweaks',
     'django_jalali',
+    'ckeditor',
+    'ckeditor_uploader',
 
 	# local app
     'home.apps.HomeConfig',
@@ -127,9 +129,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-	BASE_DIR / 'static',
-]
+# STATICFILES_DIRS = [
+# 	BASE_DIR / 'static',
+# ]
+STATIC_ROOT = BASE_DIR / 'static'
 
 # Media files
 MEDIA_URL = 'media/'
@@ -148,3 +151,15 @@ DEFAULT_FROM_EMAIL = "Info@localhost"
 AUTH_USER_MODEL = 'accounts.CustomUser'
 LOGIN_REDIRECT_URL = "panel:profile"
 LOGOUT_REDIRECT_URL = "/"
+
+
+# ckeditor config
+CKEDITOR_UPLOAD_PATH = "settings-uploads/"
+CKEDITOR_IMAGE_BACKEND = "pillow"
+CKEDITOR_CONFIGS = {
+    'default': {
+        'extraPlugins': 'codesnippet',
+        'toolbar': 'full',
+        'width': '100%',
+    },
+}

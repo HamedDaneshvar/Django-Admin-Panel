@@ -3,7 +3,8 @@ from django.db import models
 from django.core.validators import MinLengthValidator
 from django.template.defaultfilters import truncatechars
 from django.utils.translation import gettext as _
-from utils.general_model import GeneralModel 
+from utils.general_model import GeneralModel
+from ckeditor_uploader.fields import RichTextUploadingField
 
 def get_logo_path(instance, filename):
     ext = filename.split('.')[-1]
@@ -53,13 +54,13 @@ class Settings(GeneralModel):
 		verbose_name=_("website url"),)
 	logo = models.ImageField(
 		upload_to=get_logo_path,
-		default="static/assets/img/brand/logo.png",
+		default="logo/logo.png",
 		null=True,
 		blank=True,
 		verbose_name=_("Logo"),)
 	favicon = models.ImageField(
 		upload_to=get_favicon_path,
-		default="static/assets/img/brand/favcion.ico",
+		default="logo/favicon.ico",
 		null=True,
 		blank=True,
 		verbose_name=_("Favicon"),)
@@ -78,8 +79,14 @@ class Settings(GeneralModel):
 
 
 class AboutUs(GeneralModel):
-	text = models.TextField(
+	text = RichTextUploadingField(
+		null=True,
+		blank=True,
 		verbose_name=_("Text"))
+	terms = RichTextUploadingField(
+		null=True,
+		blank=True,
+		verbose_name=_("Terms and Conditions"))
 	email = models.EmailField(
 		default="info@site.com",
 		null=True,

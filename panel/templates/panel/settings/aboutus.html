@@ -3,6 +3,10 @@
 {% load widget_tweaks %}
 
 
+{% block extra-css %}
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/default.min.css">
+{% endblock extra-css %}
+
 {% block title %}
 درباره ما
 {% endblock title %}
@@ -37,8 +41,14 @@
 						{% render_field form.phone class+="form-control" placeholder="021-12345678" required="required" %}
 					</div>
 					<div class="form-group">
-						<label for="id_text">متن درباره ما</label>
+						<label for="id_text" style="display:block;">متن درباره ما</label>
+						{{ form.media }}
 						{% render_field form.text class+="form-control" required="required" %}
+					</div>
+					<div class="form-group">
+						<label for="id_text" style="display:block;">قوانین و شرایط استفاده</label>
+						{{ form.media }}
+						{% render_field form.terms class+="form-control" required="required" %}
 					</div>
 				</div>
 				<!-- /.card-body -->
@@ -51,3 +61,9 @@
 	</div>
 </div>
 {% endblock main-inner-content %}
+
+{% block domready %}
+<script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+<script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
+{% endblock domready %}

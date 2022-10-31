@@ -92,7 +92,7 @@ class AboutUsPanelForm(forms.ModelForm):
 
 	class Meta:
 		model = AboutUs
-		fields = ["text", "email", "phone",]
+		fields = ["text", "terms", "email", "phone",]
 
 
 class ContactUsPanelForm(forms.ModelForm):

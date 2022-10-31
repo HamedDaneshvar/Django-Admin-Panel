@@ -23,6 +23,7 @@ urlpatterns = [
     path('accounts/', include("accounts.urls")),
 	path('accounts/', include("django.contrib.auth.urls")),
 	path('panel/', include("panel.urls")),
+    path('ckeditor/', include('ckeditor_uploader.urls')),
     path('', include("home.urls")),
 ]
 

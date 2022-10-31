@@ -352,7 +352,7 @@ def website_settings(request):
 def aboutus_settings(request):
 	aboutus = AboutUs.objects.first()
 	if request.method == "POST":
-		form = AboutUsPanelForm(request.POST, instance=aboutus)
+		form = AboutUsPanelForm(request.POST, request.FILES, instance=aboutus)
 		if form.is_valid():
 			form.save()
 	else:
