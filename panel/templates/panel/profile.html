@@ -40,6 +40,62 @@
 <link href="{% static 'assets/switcher/demo.css' %}" rel="stylesheet">
 {% endblock css %}
 
+{% block internal-css %}
+.profile-pic {
+	color: transparent;
+	transition: all 0.3s ease;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: relative;
+	transition: all 0.3s ease;
+}
+.profile-pic input {
+	display: none;
+}
+.profile-pic img {
+	position: absolute;
+	object-fit: cover;
+	max-width: 110px;
+	box-shadow: 0 0 10px 0 rgba(255, 255, 255, .35);
+	border-radius: 50%;
+	z-index: 0;
+}
+.profile-pic .-label {
+	cursor: pointer;
+	height: 110px;
+	width: 110px;
+	border-radius: 50%;
+}
+.profile-pic:hover .-label {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: rgba(0, 0, 0, .8);
+	z-index: 100;
+	color: #fafafa;
+	transition: background-color 0.2s ease-in-out;
+	border-radius: 50%;
+	margin-bottom: 0;
+}
+.profile-pic span {
+	display: inline-flex;
+	padding: 0.2em;
+	height: 2em;
+}
+#remove_profile_btn {
+	z-index: 1000;
+	position:absolute;
+	right: -5%;
+	top: 5%;
+	border: 1px solid;
+	border-radius: 50%;
+	background: transparent;
+	font-size: 1.2rem;
+	background: #fff;
+}
+{% endblock internal-css %}
+
 {% block main-content %}
 <!-- Main Content-->
 <div class="main-content side-content pt-0">
@@ -80,7 +136,25 @@
 
 							<div class="panel profile-cover">
 								<div class="profile-cover__img">
-									<img src="{% static 'assets/img/users/1.jpg' %}" alt="img">
+									<form id="avatar_form" action="{% url 'panel:update_remove_avatar' %}" method="post" enctype="multipart/form-data">
+										{% csrf_token %}
+										<button type="button" class="badge badge-light" id="remove_profile_btn" onclick="remove_profile_func();" ><i class="fe fe-trash-2"></i></button>
+										<div class="profile-pic">
+											<label class="-label" for="id_avatar">
+												<span class="glyphicon glyphicon-camera"></span>
+												<span>تغییر پروفایل</span>
+											</label>
+											{% render_field update_remove_avatar.avatar onchange="loadFile(event)" %}
+											
+											{% if user.avatar %}
+											<img src="{{ user.avatar.url }}" id="avatar" />
+											{% else %}
+											<img src="{% static 'assets/img/users/default_user.png' %}" id="avatar" />
+											{% endif %}
+												
+											{% render_field update_remove_avatar.remove_profile %}
+										</div>
+									</form>
 									<h3 class="h3">سونیا تیلور</h3>
 								</div>
 								<div class="btn-profile">
@@ -314,4 +388,19 @@
 {% endblock js %}
 
 {% block domready %}
+<script>
+	var loadFile = function (event) {
+		var image = document.getElementById("avatar");
+		image.src = URL.createObjectURL(event.target.files[0]);
+		var form = document.getElementById("avatar_form");
+		form.submit();
+	};
+	function remove_profile_func(){
+		var image = document.getElementById("avatar");
+		var remove_checkbox = document.getElementById("id_remove_profile");
+		remove_checkbox.setAttribute("checked", "checked");
+		var form = document.getElementById("avatar_form");
+		form.submit();
+	}
+</script>
 {% endblock domready %}

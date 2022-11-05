@@ -5,6 +5,7 @@ app_name = "panel"
 urlpatterns = [
 	path("home/", views.index, name="home"),
 	path("profile/", views.profile, name="profile"),
+	path("profile/avatar/", views.update_remove_avatar, name="update_remove_avatar"),
 
 	# users
 	path("users/", views.users_list, name="users_list"),

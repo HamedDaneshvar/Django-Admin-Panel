@@ -100,3 +100,12 @@ class ContactUsPanelForm(forms.ModelForm):
 	class Meta:
 		model = ContactUs
 		fields = ["full_name", "email", "phone", "text",]
+
+
+class UpdateAndRemoveAvatar(forms.ModelForm):
+	remove_profile = forms.BooleanField(required=False,)
+	avatar = forms.ImageField(widget=forms.FileInput())
+
+	class Meta:
+		model = CustomUser
+		fields = ["avatar", "remove_profile"]

@@ -30,6 +30,7 @@ from .forms import (
 	CreateStaffUserForm,
 	UpdateStaffUserForm,
 	SettingsPanelForm,
+	UpdateAndRemoveAvatar,
 )
 
 @login_required
@@ -48,11 +49,13 @@ def profile(request):
 	else:
 		profile_form = ProfileForm(instance=user)
 		password_change_form = PasswordChangeForm(user=request.user)
+		update_remove_avatar = UpdateAndRemoveAvatar(instance=request.user)
 
 	return render(request,
 				  "panel/profile.html",
 				  {"profile_form": profile_form,
-				   "password_change_form": password_change_form,})
+				   "password_change_form": password_change_form,
+				   "update_remove_avatar": update_remove_avatar,})
 
 
 @login_required
@@ -370,3 +373,19 @@ def contactus_settings_list(request):
 	return render(request,
 				  "panel/settings/contactus_list.html",
 				  {"contactus_list": contactus_list,})
+
+@login_required
+def update_remove_avatar(request):
+	user = get_object_or_404(CustomUser, id=request.user.id)
+	if request.method == "POST":
+		form = UpdateAndRemoveAvatar(request.POST, request.FILES, instance=user)
+		if form.is_valid():
+			user = form.save(commit=False)
+			if form.cleaned_data.get("remove_profile"):
+				user.avatar.delete()
+			user.save()
+			return redirect("panel:profile")
+		else:
+			return HttpResponse("Form not allowed!")
+	else:
+		return HttpResponse("Method not allowed!")
