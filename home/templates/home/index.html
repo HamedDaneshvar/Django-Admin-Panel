@@ -76,7 +76,13 @@
 
     <div class="content">
         <div class="title m-b-md">
-            پنل ادمین جنگو 3.2
+            
+            {% if settings.name %}
+                {{ settings.name }}
+            {% else %}
+                پنل ادمین جنگو 3.2
+            {% endif %}
+                
         </div>
 
         <div class="links">
