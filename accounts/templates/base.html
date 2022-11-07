@@ -46,6 +46,9 @@
 		<!-- Sidemenu css-->
 		<link href="{% static 'assets/css-rtl/sidemenu/sidemenu.css' %}" rel="stylesheet">
 
+		<!-- Toastr css -->
+		<link href="{% static 'assets/plugins/toastr/toastr.min.css' %}" rel="stylesheet">
+
 		<!-- Switcher css-->
 		<link href="{% static 'assets/switcher/css/switcher-rtl.css' %}" rel="stylesheet">
 		<link href="{% static 'assets/switcher/demo.css' %}" rel="stylesheet">
@@ -1459,6 +1462,10 @@
 <!-- Sticky js -->
 <script src="{% static 'assets/js/sticky.js' %}"></script>
 
+<!-- Toastr js -->
+<script src="{% static 'assets/plugins/toastr/toastr.min.js' %}" ></script>
+<script src="{% static 'assets/plugins/toastr/toastr-config.js' %}" ></script>
+
 <!-- Custom js -->
 <script src="{% static 'assets/js/custom.js' %}"></script>
 
@@ -1467,7 +1474,7 @@
 {% endblock js %}
 
 {% block domready %}
-
+{% include 'includes/messages.html' %}
 {% endblock domready %}
 
 </body>
