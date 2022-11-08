@@ -26,6 +26,9 @@
 <!-- Color css-->
 <link id="theme" rel="stylesheet" type="text/css" media="all" href="{% static 'assets/css-rtl/colors/color.css' %}">
 
+<!-- Toastr css -->
+<link href="{% static 'assets/plugins/toastr/toastr.min.css' %}" rel="stylesheet">
+
 <!-- Switcher css-->
 <link href="{% static 'assets/switcher/css/switcher-rtl.css' %}" rel="stylesheet">
 <link href="{% static 'assets/switcher/demo.css' %}" rel="stylesheet">
@@ -104,6 +107,10 @@
 <!-- Select2 js-->
 <script src="{% static 'assets/plugins/select2/js/select2.min.js' %}"></script>
 
+<!-- Toastr js -->
+<script src="{% static 'assets/plugins/toastr/toastr.min.js' %}" ></script>
+<script src="{% static 'assets/plugins/toastr/toastr-config.js' %}" ></script>
+
 <!-- Custom js -->
 <script src="{% static 'assets/js/custom.js' %}"></script>
 
@@ -112,4 +119,11 @@
 {% endblock js %}
 
 {% block domready %}
+<script>
+{% if form.non_field_errors %}
+	{% for error in form.non_field_errors %}
+		toastr.error("{{ error }}");
+	{% endfor %}
+{% endif %}
+</script>
 {% endblock domready %}
