@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load widget_tweaks %}
+{% load replace_halfspace %}
 
 
 {% block title %}
@@ -65,7 +66,7 @@
 										<p class="mb-4 text-muted tx-13 ml-0 text-right">برای ایجاد ، کشف و ارتباط با جامعه جهانی وارد سیستم شوید</p>
 										<div class="form-group text-right">
 											<label for="id_username">پست الکترونیک</label>
-											{% render_field form.username class+="form-control" placeholder="ایمیل خود را وارد کنید" %}
+											{% render_field form.username type="email" class+="form-control" placeholder="ایمیل خود را وارد کنید" %}
 										</div>
 										<div class="form-group text-right">
 											<label for="id_password">کلمه عبور</label>
@@ -119,11 +120,9 @@
 {% endblock js %}
 
 {% block domready %}
-<script>
-{% if form.non_field_errors %}
-	{% for error in form.non_field_errors %}
-		toastr.error("{{ error }}");
+{% for key, errors in form.errors.items %}
+	{% for err in errors %}
+	<script>toastr.error("{{ err|replace_halfspace|linebreaksbr }}");</script>
 	{% endfor %}
-{% endif %}
-</script>
+{% endfor %}
 {% endblock domready %}

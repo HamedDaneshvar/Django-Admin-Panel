@@ -31,8 +31,9 @@ def signup(request):
 			return redirect("/")
 		else:
 			if form.errors.get('email'):
-				message_text = _(f"این ایمیل قبلا ثبت شده است. لطفا وارد شوید.")
-				messages.error(request, message_text)
+				for err in form.errors.get('email'):
+					message_text = _(err)
+					messages.error(request, message_text)
 			elif form.errors.get('password1'):
 				for err in form.errors.get('password1'):
 					message_text = _(err)
