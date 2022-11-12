@@ -3,6 +3,7 @@ from django.shortcuts import (
 	redirect,
 )
 from django.contrib import messages
+from django.contrib.auth.signals import user_logged_in
 from django.utils.translation import gettext as _
 from django.contrib.auth import (
 	login,
@@ -44,3 +45,8 @@ def signup(request):
 	return render(request,
 				  "accounts/signup.html",
 				  {"form": form,})
+
+def logged_in_message(sender, user, request, **kwargs):
+	messages.info(request, f"{request.user.nick_name} عزیز خوش آمدید:)")
+
+user_logged_in.connect(logged_in_message)
