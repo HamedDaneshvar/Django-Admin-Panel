@@ -143,10 +143,12 @@ def delete_user(request, id):
 def management_users_list(request):
 	if request.user.is_superuser:
 		users = CustomUser.objects.filter(Q(is_staff=True) |
-									  	  Q(is_superuser=True))
+									  	  Q(is_superuser=True)).exclude(
+											id=request.user.id)
 	else:
 		users = CustomUser.objects.filter(Q(is_staff=True) &
-									  	  Q(is_superuser=False))
+									  	  Q(is_superuser=False)).exclude(
+											id=request.user.id)
 
 	groups = Group.objects.all()
 	create_staffuser_form = CreateStaffUserForm()
